@@ -1,0 +1,79 @@
+//遮罩层
+<el-dialog width="50%" :title="res" :visible.sync="visibleDialog">
+      <el-form label-width="100px" label-suffix="：" :model="per">
+        <el-form-item lable="编号" hidden>
+          <el-input v-model="per.pid"></el-input>
+        </el-form-item>
+        <el-form-item label="姓名">
+          <el-input v-model="per.pname"></el-input>
+        </el-form-item>
+        <el-form-item label="性别">
+          <el-radio-group v-model="per.sex">
+            <el-radio :label="0">女</el-radio>
+            <el-radio :label="1">男</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-radio-group v-model="per.state">
+            <el-radio :label="0">在逃</el-radio>
+            <el-radio :label="1">正常</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="身份证">
+          <el-input v-model="per.idcard"></el-input>
+        </el-form-item>
+        <el-form-item label="电话">
+          <el-input v-model="per.phone"></el-input>
+        </el-form-item>
+        <el-form-item label="选择省市区">
+          <template>
+            <div class="block">
+              <span class="demonstration"></span>
+              <el-cascader :options="options" v-model="selectedOptions" @change="handleChange">
+              </el-cascader>
+            </div>
+          </template>
+        </el-form-item>
+        <el-form-item label="日期">
+          <el-date-picker v-model="per.createtime"></el-date-picker>
+        </el-form-item>
+        <el-button type="primary" @click="yes" style="margin-left: 250px">确认</el-button>
+        <el-button type="primary" @click="visibleDialog=false">取消</el-button>
+      </el-form>
+    </el-dialog>
+
+
+
+
+//分页
+<div class="block">
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-sizes="[5, 10, 20,50]"
+                     :page-size="p" layout="total, sizes, prev, pager, next, jumper" :total="t"></el-pagination>
+    </div>
+
+
+"findUserInfo": function (currentPage,size) {
+        this.$http.get("user/findUserInfo",{params:{
+            currentPage:currentPage,
+            pageSize:size
+        }}).then((resp) => {
+          console.info(resp);
+          this.sysUser = resp.rows;
+          this.t = resp.total;
+          this.p = resp.pageSize;
+        });
+      },
+
+
+handleSizeChange(val) {
+        this.findUserInfo(1, val)
+      },
+      handleCurrentChange(val) {
+        this.findUserInfo(val, this.p)
+      },
+
+
+    .filter-container .filter-item {
+        display: inline-block;
+        vertical-align: middle;
+      }
