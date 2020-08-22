@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-input placeholder="请输入内容" v-model="mo" style="width: 200px"></el-input>
+    <el-input placeholder="请输入姓名" v-model="mo" style="width: 200px"></el-input>
     <button type="button" @click="sousuo" class="el-button filter-item el-button--primary el-button--small"><!----><i
       class="el-icon-search"></i><span>搜索</span></button>
     <button type="button" @click="chong" class="el-button filter-item el-button--primary el-button--small"><!----><i
@@ -9,26 +9,26 @@
       class="el-icon-plus"></i><span>添加</span></button>
 
     <el-table width="100%" border :data="sysUser" stripe height="400px">
-      <el-table-column label="编号" prop="id" width="50px"></el-table-column>
-      <el-table-column label="姓名" prop="name" width="50px"></el-table-column>
-      <el-table-column label="性别" prop="sex" width="50px">
+      <el-table-column label="编号" prop="id" width="60px"></el-table-column>
+      <el-table-column label="姓名" prop="name" ></el-table-column>
+      <el-table-column label="性别" prop="sex" >
         <template slot-scope="scope">
           {{scope.row.sex === 1?"男":"女"}}
         </template>
       </el-table-column>
-      <el-table-column label="手机" prop="phone" width="120px"></el-table-column>
-      <el-table-column label="地址" prop="address" width="80px"></el-table-column>
+      <el-table-column label="手机" prop="phone"></el-table-column>
+      <el-table-column label="地址" prop="address"></el-table-column>
       <el-table-column label="身份证" prop="idcard"></el-table-column>
       <el-table-column label="邮箱" prop="email"></el-table-column>
-      <el-table-column label="状态" prop="state" width="50px">
+      <el-table-column label="状态" prop="state">
         <template slot-scope="scope">
-          {{scope.row.state === 1?"正常":"封禁"}}
+          {{scope.row.state === 1?"正常":"停用"}}
         </template>
       </el-table-column>
       <el-table-column label="操作" width="160px">
         <template slot-scope="scope">
           &nbsp;&nbsp;<el-button type="primary" size="mini" round @click="">修改</el-button>
-          <el-button type="danger" size="mini" round @click="">删除</el-button>
+          <el-button type="danger" size="mini" round @click="">离职</el-button>
         </template>
       </el-table-column>
     </el-table>
