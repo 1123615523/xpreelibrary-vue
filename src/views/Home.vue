@@ -36,7 +36,7 @@
                 <i class="el-icon-caret-bottom"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="Person">个人信息</el-dropdown-item>
+              <el-dropdown-item command="PersonInfo">个人信息</el-dropdown-item>
               <el-dropdown-item command="EditPwd">修改密码</el-dropdown-item>
               <el-dropdown-item command="Login">退出</el-dropdown-item>
             </el-dropdown-menu>
@@ -52,6 +52,45 @@
     </el-container>
 
 
+    <el-drawer
+      title="个人信息显示"
+      :visible.sync="show"
+      :before-close="handleClose"
+      direction="rtl"
+      custom-class="demo-drawer"
+      ref="drawer"
+      size="40%"
+    >
+      <div style="margin-right: 50px">
+        <el-form label-width="100px" label-suffix=":" :model="user">
+          <el-form-item label="姓名">
+            <el-input v-model="user.name"></el-input>
+          </el-form-item>
+          <el-form-item label="性别">
+            <el-radio-group v-model="user.sex">
+              <el-radio :label="1">男</el-radio>
+              <el-radio :label="2">女</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="手机号">
+            <el-input v-model="user.phone"></el-input>
+          </el-form-item>
+          <el-form-item label="地址">
+            <el-input v-model="user.address"></el-input>
+          </el-form-item>
+          <el-form-item label="身份证">
+            <el-input v-model="user.idcard"></el-input>
+          </el-form-item>
+          <el-form-item label="邮箱">
+            <el-input v-model="user.email"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" style="margin-left: 250px">
+          <el-button  @click="$refs.drawer.closeDrawer()":loading="loading">提交</el-button>
+          <el-button @click="show=false">取消</el-button>
+        </div>
+      </div>
+    </el-drawer>
 
   </div>
 </template>
@@ -65,6 +104,9 @@
         activeMenu: '',
         indexBreadcrumbs: [],
         menus: [],
+        show:false,
+        user:{},
+        loading:false
       }
     },
     watch: {
@@ -99,17 +141,58 @@
         console.info(indexPath);
         this.indexBreadcrumbs = indexPath;
       },
+      //个人信息 修改密码 退出
       handlerCommand: function (command) {
-        this.$router.push({name:command});
+        if (command=="PersonInfo"){
+          this.show = true;
+          this.$http.post("utils/person").then(value => {
+            this.user = value
+          }).catch(err=>console.log(err))
+
+        }else {
+          this.$router.push({name: command});
+        }
+      },
+      handleClose(done) {
+        if (this.loading) {
+          return;
+        }
+        this.$confirm('确定要提交表单吗？')
+          .then(_ => {
+            this.loading = true;
+            this.timer = setTimeout(() => {
+              done();
+              // 动画关闭需要一定的时间
+              this.$http.post("utils/editperson",this.user).then(value => {
+                if (null != value){
+                  this.$message.success("修改成功");
+                  this.loading = false;
+                  this.show = false;
+                }
+              })
+            }, 2000);
+          })
+          .catch(_ => {
+            this.show = false;
+          });
       },
       "findPromiss":function () {
         var to = window.sessionStorage.getItem("token");
         var url = "utils/find?token="+to;
         this.$http.get(url).then((resp) => {
-          console.log("获取",resp)
           this.menus =resp;
         })
       }
+    },
+    //修改个人信息
+    "edit":function () {
+      this.$http.post("utils/editperson",this.user).then(value => {
+        if (null != value){
+          this.$message.success("修改成功");
+          this.loading = false;
+          this.show = false;
+        }
+      })
     },
     created () {
       this.handChange();
